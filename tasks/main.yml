@@ -21,7 +21,7 @@
 
 - name: find latest JDK version
   include: find_latest.yml
-  when: oracle_java_latest
+  when: oracle_java_latest is defined and oracle_java_latest
 
 - include: debug.yml
   when: debug | default(false)
