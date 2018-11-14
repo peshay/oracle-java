@@ -12,4 +12,4 @@ oracle_java_rpm_url: 'http://download.oracle.com/otn-pub/java/jdk/11.0.1+13/90cf
 oracle_java_rpm_validate_certs: yes
 oracle_java_version: 11
 oracle_java_version_string: 11.0.1
-latest_jdk: false
+oracle_java_latest: false
