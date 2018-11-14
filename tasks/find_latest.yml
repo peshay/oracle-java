@@ -1,0 +1,56 @@
+---
+# tasks file to find latest JDK version
+- name: lookup available JDK downloads
+  uri:
+    url: "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
+    return_content: yes
+    validate_certs: no
+  register: oracle_downloads
+
+- name: lookup URL for downloads
+  set_fact:
+    oracle_downloads_url: "{{ oracle_downloads.content | regex_search( regexp ) }}"
+  vars:
+    regexp: "\/technetwork\/java\/javase\/downloads\/jdk{{ oracle_java_version }}-downloads-.+.html"
+
+- name: lookup available JDK files
+  uri:
+    url: "https://www.oracle.com/{{ oracle_downloads_url }}"
+    return_content: yes
+    validate_certs: no
+  register: oracle_java_files
+
+- block:
+  - name: lookup JDK RPM url
+    set_fact:
+      oracle_java_rpm_url: "{{ oracle_java_files.content | regex_search( regexp ) }}"
+    vars:
+        regexp: "http[s]?:\/\/download.oracle.com\/otn-pub\/java\/jdk/{{ oracle_java_version }}u[0-9]+-[a-z0-9]+/[a-z0-9]+/jdk-{{ oracle_java_version }}u[0-9]+-linux-x64.rpm"
+  - name: lookup JDK RPM filename
+    set_fact:
+      oracle_java_rpm_filename: "{{ oracle_java_rpm_url | regex_search( regexp) }}"
+    vars:
+        regexp: "jdk-{{ oracle_java_version }}u[0-9]+-linux-x64.rpm"
+  - name: lookup java update string
+    set_fact:
+      oracle_java_update_string: "{{ oracle_java_rpm_filename | regex_replace( '^jdk-[0-9]+u(?P<u>[0-9]+)-linux-x64.rpm$', '\\g<u>' )}}"
+  - name: lookup java version string
+    set_fact:
+      oracle_java_version_string: "1.{{ oracle_java_version }}.0_{{ oracle_java_update_string }}"
+  when: oracle_java_version == 8
+
+- block:
+  - name: lookup JDK RPM url
+    set_fact:
+      oracle_java_rpm_url: "{{ oracle_java_files.content | regex_search( regexp ) }}"
+    vars:
+        regexp: "http[s]?:\/\/download.oracle.com\/otn-pub\/java\/jdk\/{{ oracle_java_version }}.[.0-9+]+/[a-z0-9]+/jdk-{{ oracle_java_version }}.[0-9.]+_linux-x64_bin.rpm"
+  - name: lookup JDK RPM filename
+    set_fact:
+      oracle_java_rpm_filename: "{{ oracle_java_rpm_url | regex_search( regexp) }}"
+    vars:
+        regexp: "jdk-{{ oracle_java_version }}.[0-9.]+_linux-x64_bin.rpm"
+  - name: lookup java version string
+    set_fact:
+      oracle_java_version_string: "{{ oracle_java_rpm_filename | regex_replace( '^jdk-(?P<v>[0-9.]+)_linux-x64_bin.rpm$', '\\g<v>' )}}"
+  when: oracle_java_version == 11
