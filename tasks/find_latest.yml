@@ -11,7 +11,7 @@
   set_fact:
     oracle_downloads_url: "{{ oracle_downloads.content | regex_search( regexp ) }}"
   vars:
-    regexp: "\/technetwork\/java\/javase\/downloads\/jdk{{ oracle_java_version }}-downloads-.+.html"
+    regexp: '/technetwork/java/javase/downloads/jdk{{ oracle_java_version }}-downloads-.+.html'
 
 - name: lookup available JDK files
   uri:
@@ -25,7 +25,7 @@
     set_fact:
       oracle_java_rpm_url: "{{ oracle_java_files.content | regex_search( regexp ) }}"
     vars:
-        regexp: "http[s]?:\/\/download.oracle.com\/otn-pub\/java\/jdk/{{ oracle_java_version }}u[0-9]+-[a-z0-9]+/[a-z0-9]+/jdk-{{ oracle_java_version }}u[0-9]+-linux-x64.rpm"
+        regexp: 'http[s]?://download.oracle.com/otn-pub/java/jdk/{{ oracle_java_version }}u[0-9]+-[a-z0-9]+/[a-z0-9]+/jdk-{{ oracle_java_version }}u[0-9]+-linux-x64.rpm'
   - name: lookup JDK RPM filename
     set_fact:
       oracle_java_rpm_filename: "{{ oracle_java_rpm_url | regex_search( regexp) }}"
@@ -44,7 +44,7 @@
     set_fact:
       oracle_java_rpm_url: "{{ oracle_java_files.content | regex_search( regexp ) }}"
     vars:
-        regexp: "http[s]?:\/\/download.oracle.com\/otn-pub\/java\/jdk\/{{ oracle_java_version }}.[.0-9+]+/[a-z0-9]+/jdk-{{ oracle_java_version }}.[0-9.]+_linux-x64_bin.rpm"
+        regexp: 'http[s]?://download.oracle.com/otn-pub/java/jdk/{{ oracle_java_version }}.[.0-9+]+/[a-z0-9]+/jdk-{{ oracle_java_version }}.[0-9.]+_linux-x64_bin.rpm'
   - name: lookup JDK RPM filename
     set_fact:
       oracle_java_rpm_filename: "{{ oracle_java_rpm_url | regex_search( regexp) }}"
